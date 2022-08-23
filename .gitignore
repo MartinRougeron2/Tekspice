@@ -1,0 +1,10 @@
+*.o
+nanotekspice
+vgcore.*
+.vscode/launch.json
+.vscode/settings.json
+.vscode/tasks.json
+test_unit/test_
+test
+a.out
+runs.sh

@@ -1,0 +1,121 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: compile nanotekspice
+      run: make re
+    - name: get gtest
+      run: |
+        wget https://github.com/google/googletest/archive/release-1.8.0.tar.gz
+        tar xf release-1.8.0.tar.gz
+        cd googletest-release-1.8.0
+        cmake -DBUILD_SHARED_LIBS=ON .
+        make
+        sudo cp -a googletest/include/gtest /usr/include
+        sudo cp -a googlemock/gtest/libgtest_main.so googlemock/gtest/libgtest.so /usr/lib/
+    - name: compile test
+      run: make test
+
+  tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: get gtest
+      run: |
+        wget https://github.com/google/googletest/archive/release-1.8.0.tar.gz
+        tar xf release-1.8.0.tar.gz
+        cd googletest-release-1.8.0
+        cmake -DBUILD_SHARED_LIBS=ON .
+        make
+        sudo cp -a googletest/include/gtest /usr/include
+        sudo cp -a googlemock/gtest/libgtest_main.so googlemock/gtest/libgtest.so /usr/lib/
+    - name: build
+      run: |
+        make re
+        make test
+    - name: easy functionnal testing (parse)
+
+      run: |
+        echo "nts_single/clock.nts"
+        ./nanotekspice .documentation/nts_single/clock.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/clock.nts < .commands_to_test/easy_commands
+        echo "nts_single/input_output.nts"
+        ./nanotekspice .documentation/nts_single/input_output.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/input_output.nts < .commands_to_test/easy_commands
+        echo "nts_single/true.nts"
+        ./nanotekspice .documentation/nts_single/true.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/true.nts < .commands_to_test/easy_commands
+        echo "nts_single/false.nts"
+        ./nanotekspice .documentation/nts_single/false.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/false.nts < .commands_to_test/easy_commands
+
+    - name: unit testing
+      run: ./test
+
+    - name : medium functionnal testing (parse)
+      run: |
+
+        echo "nts_single/4514_decoder.nts"
+        ./nanotekspice .documentation/nts_single/4514_decoder.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4514_decoder.nts < .commands_to_test/exit
+        echo "nts_single/4030_xor.nts"
+        ./nanotekspice .documentation/nts_single/4030_xor.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4030_xor.nts < .commands_to_test/easy_commands
+        echo "nts_single/4069_not.nts"
+        ./nanotekspice .documentation/nts_single/4069_not.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4081_and.nts < .commands_to_test/easy_commands
+        echo "nts_single/4081_and.nts"
+        ./nanotekspice .documentation/nts_single/4081_and.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4001_nor.nts < .commands_to_test/easy_commands
+        echo "nts_single/4001_nor.nts"
+        ./nanotekspice .documentation/nts_single/4001_nor.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4011_nand.nts < .commands_to_test/easy_commands
+        echo "nts_single/4011_nand.nts"
+        ./nanotekspice .documentation/nts_single/4011_nand.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4071_or.nts < .commands_to_test/easy_commands
+        echo "nts_single/4071_or.nts"
+        ./nanotekspice .documentation/nts_single/4071_or.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4069_not.nts < .commands_to_test/easy_commands
+        echo "nts_single/4512_selector.nts"
+        ./nanotekspice .documentation/nts_single/4512_selector.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4512_selector.nts < .commands_to_test/easy_commands
+        echo "nts_single/4801_ram.nts"
+        ./nanotekspice .documentation/nts_single/4801_ram.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4801_ram.nts < .commands_to_test/easy_commands
+        echo "nts_single/logger.nts"
+        ./nanotekspice .documentation/nts_single/logger.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/logger.nts < .commands_to_test/easy_commands
+        echo "nts_single/4017_johnson.nts"
+        ./nanotekspice .documentation/nts_single/4017_johnson.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4017_johnson.nts < .commands_to_test/easy_commands
+        echo "nts_single/4040_counter.nts"
+        ./nanotekspice .documentation/nts_single/4040_counter.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4040_counter.nts < .commands_to_test/easy_commands
+        echo "nts_single/4094_shift.nts"
+        ./nanotekspice .documentation/nts_single/4094_shift.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4094_shift.nts < .commands_to_test/easy_commands
+        echo "nts_single/4514_decoder.nts"
+        ./nanotekspice .documentation/nts_single/4514_decoder.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4514_decoder.nts < .commands_to_test/easy_commands
+        echo "nts_single/2716_rom.nts"
+        ./nanotekspice .documentation/nts_single/2716_rom.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/2716_rom.nts < .commands_to_test/easy_commands
+        echo "nts_single/4008_adder.nts"
+        ./nanotekspice .documentation/nts_single/4008_adder.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4008_adder.nts < .commands_to_test/easy_commands
+        echo "nts_single/4013_flipflop.nts"
+        ./nanotekspice .documentation/nts_single/4013_flipflop.nts < .commands_to_test/exit
+        ./nanotekspice .documentation/nts_single/4013_flipflop.nts < .commands_to_test/easy_commands
